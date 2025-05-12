@@ -19,4 +19,10 @@ python src/query.py \
 ```
 
 # 3. Evaluate
-metrics_evaluation.py
+```bash
+python src/metrics_evaluation.py \
+  --pred 'RF16' \
+  --ref '16 Feature Random Forest Classifier' \
+  --api-key 'sk-xxx' \
+  --out-dir outputs\score
+```
