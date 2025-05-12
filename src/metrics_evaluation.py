@@ -5,10 +5,22 @@ from sklearn.metrics.pairwise import cosine_similarity
 from gpt_scoring import get_eval_score
 from openai import OpenAI
 import numpy as np
+import pandas as pd
 import os
 import time
+import argparse
 
-os.environ['api_key'] = "sk-XXXX" 
+def parse_args():
+
+    p = argparse.ArgumentParser()
+
+    p.add_argument('--pred', required=True, help="LLM's response")
+    p.add_argument('--ref', required=True, help="reference")
+    p.add_argument('--api-key', required=True, help="OpenAI API key")
+    p.add_argument('--out-dir', required=True, help="Output directory")
+    args = p.parse_args()
+
+    return args
 
 def bleu_eval(pred, ref):
     bleu = BLEUScore(n_gram=1)
@@ -47,3 +59,26 @@ def gpt_eval(pred, ref):
         return score
     except:
         return response
+
+def main(pred, ref, api_key, out_dir):
+    os.makedirs(out_dir, exist_ok=True)
+    os.environ['api_key'] = api_key
+
+    df = pd.DataFrame(columns=['pred', 'ref', 'bleu', 'bert', 'rouge_1', 'rouge_2', 'rouge_L', 'cos', 'gpt'])
+
+    bleu = bleu_eval(pred, ref)
+    bert = bert_eval(pred, ref)
+    r_1, r_2, r_L= rouge_eval(pred, ref)
+    cos = cos_eval(pred, ref)
+    gpt = gpt_eval(pred, ref)
+    
+    df.loc[0] = [pred, ref, bleu, bert, r_1, r_2, r_L, cos, gpt]
+
+    out_path = os.path.join(out_dir, "scoring.xlsx")
+    df.to_excel(out_path, index=False)
+
+
+if __name__ == '__main__':
+
+    args = parse_args()
+    main(args.pred, args.ref, args.api_key, args.out_dir)
