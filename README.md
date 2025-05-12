@@ -3,16 +3,16 @@ This repository contains the code for reproducing all the results in the paper "
 
 # 1. Clean XML
 ```bash
-python ./src/xml_processing.py \
+python src/xml_processing.py \
   --input-dir data/xml \
   --output-dir outputs/cleaned_xml
 ```
 
 # 2. Get Responses
 ```bash
-python ./src/query.py \
-  --xml-dir ./outputs/cleaned_xml \
-  --out-dir ./outputs/responses \
+python src/query.py \
+  --xml-dir outputs/cleaned_xml \
+  --out-dir outputs/responses \
   --model 'gpt-3.5-turbo-0125' \
   --api-key 'sk-xxx' \
   --mode 'zero'
