@@ -1,8 +1,8 @@
 import html
 import pubmed_parser as pp
 import os
-from chat_zeroshot import get_response # for zero-shot settings
-# from chat_fewshot import get_response # for few-shot settings
+from utils_zeroshot import get_response # for zero-shot settings
+# from utils_fewshot import get_response # for few-shot settings
 import pandas as pd
 import time
 
