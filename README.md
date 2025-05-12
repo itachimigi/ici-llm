@@ -2,13 +2,15 @@
 This repository contains the code for reproducing all the results in the paper "Developing biomedical knowledgebases from the literature using large language models – a systematic assessment".
 
 # 1. Clean XML
-```python ./src/xml_processing.py \
+```bash
+python ./src/xml_processing.py \
   --input-dir data/xml \
   --output-dir outputs/cleaned_xml
 ```
 
 # 2. Get Responses
-```python ./src/query.py \
+```bash
+python ./src/query.py \
   --xml-dir ./outputs/cleaned_xml \
   --out-dir ./outputs/responses \
   --model 'gpt-3.5-turbo-0125' \
