@@ -24,5 +24,5 @@ python src/metrics_evaluation.py \
   --pred 'RF16' \
   --ref '16 Feature Random Forest Classifier' \
   --api-key 'sk-xxx' \
-  --out-dir outputs\score
+  --out-dir outputs/score
 ```
