@@ -5,7 +5,7 @@ This repository contains the code for reproducing all the results in the paper "
 ![ici-llm](workflow.svg)
 
 # Prompt design
-![image](https://github.com/user-attachments/assets/2e59787b-4d01-421b-8ef1-fdbdd46eb81d)
+![ici-llm](prompt.svg)
 
 # 1. Clean XML
 Preprocess the XML files to prevent parsing errors.
