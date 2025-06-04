@@ -1,7 +1,11 @@
 # Developing biomedical knowledgebases from the literature using large language models – a systematic assessment
 This repository contains the code for reproducing all the results in the paper "Developing biomedical knowledgebases from the literature using large language models – a systematic assessment".
 
+# Workflow
 ![ici-llm](workflow.svg)
+
+# Prompt design
+![image](https://github.com/user-attachments/assets/2e59787b-4d01-421b-8ef1-fdbdd46eb81d)
 
 # 1. Clean XML
 Preprocess the XML files to prevent parsing errors.
@@ -13,7 +17,7 @@ python src/xml_processing.py \
 ```
 
 # 2. Get Responses
-For each publication, we extracted its title, abstract, main text, and figure captions, and concatenated them into a single text string. We evaluated the performance of three LLMs (Supplementary Table 3), namely GPT-3.5 turbo (gpt-3.5-turbo-0125), GPT-4 turbo (gpt-4-turbo-2024-04-09), and GPT-4o (gpt-4o-2024-05-13).
+For each publication, we extracted its title, abstract, main text, and figure captions, and concatenated them into a single text string. We evaluated the performance of five LLMs (Supplementary Table 3), namely GPT-3.5 turbo (gpt-3.5-turbo-0125), GPT-4 turbo (gpt-4-turbo-2024-04-09), GPT-4o (gpt-4o-2024-05-13), DeepSeek-R1 (DeepSeek-R1-0528) and Gemini-2.5 (gemini-2.5-flash-preview-05-20).
 
 ```bash
 python src/query.py \
