@@ -19,7 +19,7 @@ def parse_args():
     p.add_argument('--out-dir', required=True, help="Output directory for responses")
     p.add_argument('--model', required=True, help="Model name: gpt-3.5-turbo, gpt-4-turbo, gpt-4o, deepseek-r1, gemini-2.5")
     p.add_argument('--api-key', required=True, help="API key")
-    p.add_argument('--mode', required=True, help="zero-shot or few-shot")
+    p.add_argument('--mode', required=True, help="zeroshot or fewshot")
 
     args = p.parse_args()
 
@@ -112,12 +112,12 @@ def main(xml_dir, out_dir, model, api_key, mode):
         text = get_text(path)
         
         # Prepare system and user messages for zeroshot  prompts
-        if mode == "zero-shot":
+        if mode == "zeroshot":
             system_message_1, user_message_1 = get_zeroshot_input(True, text)
             system_message_2, user_message_2 = get_zeroshot_input(False, text)
 
         # Prepare system and user messages for fewshot prompts
-        elif mode == "few-shot":
+        elif mode == "fewshot":
             system_message_1, user_message_1 = get_fewshot_input(True, text)
             system_message_2, user_message_2 = get_fewshot_input(False, text)
 
@@ -142,7 +142,7 @@ def main(xml_dir, out_dir, model, api_key, mode):
         process_response(response_2, df, i, cols[4:])
 
 
-    df_zeroshot.to_excel(os.path.join(out_dir, f"responses_{model}_{mode}.xlsx"), index=False)
+    df.to_excel(os.path.join(out_dir, f"responses_{model}_{mode}.xlsx"), index=False)
 
 
 if __name__ == '__main__':
