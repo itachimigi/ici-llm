@@ -19,6 +19,7 @@ def parse_args():
     p.add_argument('--out-dir', required=True, help="Output directory for responses")
     p.add_argument('--model', required=True, help="Model name: gpt-3.5-turbo, gpt-4-turbo, gpt-4o, deepseek-r1, gemini-2.5")
     p.add_argument('--api-key', required=True, help="API key")
+    p.add_argument('--mode', required=True, help="zero-shot or few-shot")
 
     args = p.parse_args()
 
@@ -95,7 +96,7 @@ def call_LLM(api_key, model, system_message, user_message):
 
     return response
 
-def main(xml_dir, out_dir, model, api_key):
+def main(xml_dir, out_dir, model, api_key, mode):
 
     os.makedirs(out_dir, exist_ok=True)
 
@@ -103,64 +104,48 @@ def main(xml_dir, out_dir, model, api_key):
     cols = ['id', 'Predictor', 'Feature', 'Model',
         'Data Required', 'Biosample Required', 'Cancer', 'Species', 'Treatment',
         'Cohort Details', 'Target Outcome', 'Correlation with Efficacy']
-    df_zeroshot = pd.DataFrame(columns=cols, index=range(len(files)))
-    
-    df_fewshot = df_zeroshot.copy()
+    df = pd.DataFrame(columns=cols, index=range(len(files)))
 
     for i, fn in enumerate(files):
         paper_id = os.path.splitext(fn)[0]
         path = os.path.join(xml_dir, fn)
         text = get_text(path)
-
-        # Prepare system and user messages for zeroshot  prompts  
-        system_message_zeroshot_1, user_message_zeroshot_1 = get_zeroshot_input(True, text)
-        system_message_zeroshot_2, user_message_zeroshot_2 = get_zeroshot_input(False, text)
+        
+        # Prepare system and user messages for zeroshot  prompts
+        if mode == "zero-shot":
+            system_message_1, user_message_1 = get_zeroshot_input(True, text)
+            system_message_2, user_message_2 = get_zeroshot_input(False, text)
 
         # Prepare system and user messages for fewshot prompts
-        system_message_fewshot_1, user_message_fewshot_1 = get_fewshot_input(True, text)
-        system_message_fewshot_2, user_message_fewshot_2 = get_fewshot_input(False, text)
+        elif mode == "few-shot":
+            system_message_1, user_message_1 = get_fewshot_input(True, text)
+            system_message_2, user_message_2 = get_fewshot_input(False, text)
 
         try:
-            response_zeroshot_1 = call_LLM(api_key,  model, system_message_zeroshot_1, user_message_zeroshot_1)
+            response_1 = call_LLM(api_key,  model, system_message_1, user_message_1)
         except:
-            print(f"Error calling LLM for {paper_id} zeroshot_1")
-            response_zeroshot_1 = "Error"
+            print(f"Error calling LLM for {paper_id} {mode}_1")
+            response_1 = "Error"
 
         time.sleep(2)
         try:
-            response_zeroshot_2 = call_LLM(api_key, model, system_message_zeroshot_2, user_message_zeroshot_2)
+            response_2 = call_LLM(api_key, model, system_message_2, user_message_2)
         except:
-            print(f"Error calling LLM for {paper_id} zeroshot_2")
-            response_zeroshot_2 = "Error"
+            print(f"Error calling LLM for {paper_id} {mode}_2")
+            response_2 = "Error"
         
         time.sleep(2)
-        try:
-            response_fewshot_1 = call_LLM(api_key, model, system_message_fewshot_1, user_message_fewshot_1)
-        except:
-            print(f"Error calling LLM for {paper_id} fewshot_1")
-            response_fewshot_1 = "Error"
-        
-        time.sleep(2)
-        try:
-            response_fewshot_2 = call_LLM(api_key, model, system_message_fewshot_2, user_message_fewshot_2)
-        except:
-            print(f"Error calling LLM for {paper_id} fewshot_2")
-            response_fewshot_2 = "Error"
 
-        df_zeroshot.loc[i, 'id'] = paper_id
-        df_fewshot.loc[i, 'id'] = paper_id
+        df.loc[i, 'id'] = paper_id
 
-        process_response(response_zeroshot_1, df_zeroshot, i, cols[1:4])
-        process_response(response_zeroshot_2, df_zeroshot, i, cols[4:])
-        process_response(response_fewshot_1, df_fewshot, i, cols[1:4])
-        process_response(response_fewshot_2, df_fewshot, i, cols[4:])
+        process_response(response_1, df, i, cols[1:4])
+        process_response(response_2, df, i, cols[4:])
 
 
-    df_zeroshot.to_excel(os.path.join(out_dir, f"responses_{model}_zeroshot.xlsx"), index=False)
-    df_fewshot.to_excel(os.path.join(out_dir, f"responses_{model}_fewshot.xlsx"), index=False)
+    df_zeroshot.to_excel(os.path.join(out_dir, f"responses_{model}_{mode}.xlsx"), index=False)
 
 
 if __name__ == '__main__':
 
     args = parse_args()
-    main(args.xml_dir, args.out_dir, args.model, args.api_key)
+    main(args.xml_dir, args.out_dir, args.model, args.api_key, args.mode)
