@@ -18,12 +18,13 @@ python src/xml_processing.py \
 
 # 2. Get Responses
 For each publication, we extracted its title, abstract, main text, and figure captions, and concatenated them into a single text string. We evaluated the performance of five LLMs (Supplementary Table 3), namely GPT-3.5 turbo (gpt-3.5-turbo-0125), GPT-4 turbo (gpt-4-turbo-2024-04-09), GPT-4o (gpt-4o-2024-05-13), DeepSeek-R1 (DeepSeek-R1-0528) and Gemini-2.5 (gemini-2.5-flash-preview-05-20).
+# --model "gpt-3.5-turbo", "gpt-4-turbo", "gpt-4o", "deepseek-r1", "gemini-2.5"
 
 ```bash
 python src/query.py \
   --xml-dir outputs/cleaned_xml \
   --out-dir outputs/responses \
-  --model 'gpt-3.5-turbo-0125' \
+  --model 'gpt-3.5-turbo' \
   --api-key 'sk-xxx' \
   --mode 'zero'
 ```
